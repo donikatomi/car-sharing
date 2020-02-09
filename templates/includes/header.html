@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
     <title>Car Sharing</title>
 </head>
-
+<div id="wrapper">
 <body>
     <div id="header" class="full-rel-left">
         <nav class="navbar navbar-expand-lg navbar-dark">
@@ -49,7 +49,7 @@
                             <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                 aria-haspopup="true" aria-expanded="false">{{logged_in_user.first_name}}</a>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">My Listings</a>
+                                <a class="dropdown-item" href="/my-listings">My Listings</a>
                                 <a class="dropdown-item" href="/profile">Add Listing</a>
                                 <a class="dropdown-item" href="/">Search Listing</a>
                                 <div class="dropdown-divider"></div>

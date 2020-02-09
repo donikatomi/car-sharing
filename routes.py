@@ -2,7 +2,7 @@ from flask import Flask
 from config import app
 from controller_functions import (landing_page, register, on_register, on_login, logout, 
 profile_dashboard, create_listing, on_like, on_unlike, on_details, destroy, edit, update, 
-all_users, on_follow, on_unfollow, login, searchListing, details, request_listing, requests)
+all_users, on_follow, on_unfollow, login, searchListing, details, request_listing, requests, my_lisitngs)
 
 app.add_url_rule("/", view_func=landing_page)
 app.add_url_rule("/register", view_func=register)
@@ -16,6 +16,7 @@ app.add_url_rule("/search", view_func=searchListing, methods=['GET'])
 app.add_url_rule("/<int:listing_id>/details", view_func=details)
 app.add_url_rule("/<int:listing_id>/request_listing", view_func=request_listing, methods=['POST'])
 app.add_url_rule("/requests", view_func=requests)
+app.add_url_rule("/my-listings", view_func=my_lisitngs)
 
 
 app.add_url_rule("/tweets/<int:tweet_id>/add_like", view_func=on_like)

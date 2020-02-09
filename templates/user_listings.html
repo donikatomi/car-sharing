@@ -1,0 +1,18 @@
+{% include 'includes/header.html' %}
+
+
+<div class="container my-5 content-height">
+    <h4 class="mb-3">My Listings:</h3>
+        <div class="list-group listing-group">
+            {% for listing in listings %}
+            <a href="/{{listing.id}}/details" class="list-group-item list-group-item-action list-group-item-warning">
+                {{listing.description}} on {{listing.day}} {{listing.month}}
+                <span id="listing-price" class="ml-5">Price: {{listing.price}} &euro;</span></a>
+
+            <hr>
+            {% endfor %}
+        </div>
+</div>
+
+
+{% include 'includes/footer.html' %}

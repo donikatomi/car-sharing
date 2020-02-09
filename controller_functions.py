@@ -6,6 +6,8 @@ from datetime import datetime
 app.secret_key = 'secret'
 bcrypt = Bcrypt(app)
 
+from sqlalchemy import text
+
 
 def landing_page():
     if ('user_id' in session):
@@ -54,19 +56,27 @@ def profile_dashboard():
     if 'user_id' not in session:
         return redirect('/')     
     logged_in_user = User.query.filter_by(id=session['user_id']).first_or_404("Not logged in")  
-    # existing_user = User.query.get(session['user_id'])
-    # listings=Listing.query.all()
-    # for single_listing in listings:
-    #     single_listing.users_request_this_listing.all()
-    #     print(single_listing.users_request_this_listing.all())
-    #     db.session.commit()
-    #     if single_listing.users_request_this_listing.all():
-    #         count += 1
     return render_template("profile_dashboard.html", logged_in_user=logged_in_user)
 
 def requests():
+    sql = text('select l.*, l.date as ldate, strftime("%m", l.date) as month, strftime("%d", l.date) as day, u.first_name as requester_name, u.last_name as requester_lastname, u.id as requester_id from  listings l join requests r on l.id = r.listing_id join users u on r.user_id = u.id Where l.user_id = 2 order by l.date desc')
+    listings = db.engine.execute(sql)
+    # for listing in listings:
+    #     date_time_obj = datetime.strptime(listing.ldate, '%Y-%m-%d %H:%M:%S.%f')
+        # listing.month = date_time_obj.strftime("%B")
+        # listing.day = date_time_obj.day
+
+
+    # count=0
     logged_in_user = User.query.filter_by(id=session['user_id']).first_or_404("Not logged in")
-    listings = Listing.query.filter_by(user_id=session['user_id']).all()
+    # listings = Listing.query.filter_by(user_id=session['user_id']).all()
+    # users = []
+    # for listing in listings:
+    #     listing.users_request_this_listing.all()
+    #     db.session.commit()
+    #     users.append(listing.users_request_this_listing.all())
+    #     users_request_this_listing.first_name
+    # count = len(users)  
     
     return render_template("requests.html", logged_in_user=logged_in_user, listings=listings)
 
@@ -81,6 +91,14 @@ def create_listing():
     db.session.add(new_listing)
     db.session.commit()
     return redirect('/profile')
+
+def my_lisitngs():
+    logged_in_user = User.query.filter_by(id=session['user_id']).first_or_404("Not logged in")
+    listings = Listing.query.filter(Listing.user_id==session['user_id']).all()
+    for listing in listings:
+        listing.month = listing.date.strftime("%B")
+        listing.day = listing.date.day
+    return render_template("user_listings.html", listings=listings, logged_in_user=logged_in_user)
 
 def searchListing():
     if ('user_id' in session):
@@ -111,9 +129,9 @@ def details(listing_id):
 
 def request_listing(listing_id, methods=['POST']):
     if request:
-        existing_user = User.query.get(session['user_id'])
+        logged_in_user = User.query.get(session['user_id'])
         existing_listing = Listing.query.get(listing_id)
-        existing_listing.users_request_this_listing.append(existing_user)
+        existing_listing.users_request_this_listing.append(logged_in_user)
         db.session.commit()
     return redirect(f'/{listing_id}/details')
 
