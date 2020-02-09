@@ -1,0 +1,62 @@
+body{
+  background-color: #f1f1f1;
+  min-height: 100%;
+}
+.full-rel-left{
+  width: 100%;
+}
+.my-btn{
+  background-color: #fa9641;
+  color: #fff;
+  font-weight: bold;
+}
+#header{
+  padding: 10px 0;
+  background-color:  #343A40;
+}
+.navbar-dark .navbar-nav .nav-link{
+  color: #fff;
+  font-weight: bolder;
+}
+#main{
+  height: 25em;
+  background-image: url("../img/traveling.jpeg");
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center
+}
+#listing{
+  height: 30em;
+  background-color: #f1f1f1;
+  padding: 30px;
+}
+#listing-price{
+  font-weight: bolder;
+}
+div.content-height{
+  min-height: 300px;
+}
+/* .listing-group{
+  display: flex;
+  justify-content: space-evenly;
+} */
+
+#footer{
+  background-color: #2f2f2f;
+  color: #fff;
+  width: 100%;
+  height: 100px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  bottom: 0;
+}
+
+
+
+

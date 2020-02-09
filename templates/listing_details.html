@@ -1,0 +1,14 @@
+{% include 'includes/header.html' %}
+
+    
+    <div class="container my-5" id="results">
+        <p>{{listing.user.first_name}} is {{listing.description}} on {{listing.month}} {{listing.day}} at {{listing.hour}}:{{listing.minute}}</p> 
+        <p>Price: {{listing.price}} &euro;</p> 
+        {% if listing.user.id != session['user_id'] %}  
+        <form action="/{{listing.id}}/request_listing" method="post">
+        <input type="submit" name="request_listing" value="Request" class="btn my-btn" id="request">
+        </form>
+        {% endif %}
+    </div>
+
+{% include 'includes/footer.html' %}

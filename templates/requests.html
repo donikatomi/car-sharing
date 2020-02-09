@@ -1,0 +1,14 @@
+{% include 'includes/header.html' %}
+
+
+<div class="container my-3 content-height">
+    {% for listing in listings %}
+    <p>User requested your listing: Driving from Prishtina to Prizren on 15 March</p>
+    <a href="/{{listing.id}}/accept" class="btn btn-success">Accept</a>
+    <a href="/{{listing.id}}/decline" class="btn btn-danger">Decline</a>
+    <hr>
+    {% endfor %}
+</div>
+
+
+{% include 'includes/footer.html' %}

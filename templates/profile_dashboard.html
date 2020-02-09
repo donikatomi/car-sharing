@@ -1,0 +1,67 @@
+{% include 'includes/header.html' %}
+
+    <div id="listing">
+        <h4 class="row mb-5 mx-auto">Add a Listing:</h4>
+        <form action="/create_listing" method="post" class="form">
+            <div class="form-group row">
+                <label for="datetime-local-input" class="col-sm-12 col-md-4 col-lg-2 col-form-label">Select Date and
+                    Time</label>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="datepicker" name="datepicker" autocomplete="off">
+                </div>
+
+                <label for="price" class="col-sm-12 col-md-4 col-lg-1 col-form-label" id="price">Add price:</label>
+                <div class="col-sm-12 col-md-6 col-lg-3">
+                    <input class="form-control" type="text" name="price" placeholder="€">
+                </div>
+            </div>
+            <div class="form-group row">
+                <input type="text" class="form-control form-control-lg mb-2 mr-sm-2 col-sm-5" name="from"
+                    placeholder="Driving From..">
+                <input type="text" class="form-control form-control-lg mb-2 mr-sm-2 col-sm-5" name="to"
+                    placeholder="Going To..">
+                <button class="btn my-btn btn-lg">Add</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="footer" class="full-rel-left">
+        Footer
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    <!-- 
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.0/moment-with-locales.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/datetimepicker.js') }}"></script>
+     -->
+    <script>
+        $(function () {
+            $('input[name="datepicker"]').daterangepicker({
+                autoUpdateInput: false,
+                singleDatePicker: true,
+                showDropdowns: true,
+                timePicker: true,
+                timePicker24Hour: true,
+                minYear: 2020,
+                maxYear: 2021,
+                locale: {
+                    "format": "YYYY-MM-DD hh:mm",
+                }
+            });
+        });
+
+        $('input[name="datepicker"]').on('apply.daterangepicker', function (ev, picker) {
+            $(this).val(picker.startDate.format('YYYY-MM-DD hh:mm'));
+        });
+
+    </script>
+</body>
+
+</html>

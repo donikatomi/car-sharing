@@ -1,0 +1,26 @@
+{% include 'includes/header.html' %}
+
+    <div class="row mt-5 ml-5">
+        <form action="/search" method="get" class="form-inline ml-5">
+            <input type="text" class="form-control form-control-lg mb-2 mr-sm-2 col-sm-5" name="from"
+                placeholder="Traveling From..">
+            <input type="text" class="form-control form-control-lg mb-2 mr-sm-2 col-sm-5" name="to"
+                placeholder="Going To..">
+            <button class="btn my-btn btn-lg"><i class="fas fa-search"></i></button>
+        </form>
+    </div>
+    <div class="container my-5" class="content-height">
+        {% if(not listings) %}
+        <h4 class="mb-3">No Results</h4>
+        {% else %}
+        <h4 class="mb-3">Listings:</h4>
+        <div class="list-group listing-group">
+            {% for listing in listings %}
+            <a href="/{{listing.id}}/details" class="list-group-item list-group-item-action list-group-item-warning">{{listing.user.first_name}} is {{listing.description}} on {{listing.day}} {{listing.month}} 
+            <span id="listing-price" class="ml-5">Price: {{listing.price}}</span></a> 
+            {% endfor %}
+        {% endif %}
+        </div>
+    </div>
+
+{% include 'includes/footer.html' %}
