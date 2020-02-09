@@ -9,9 +9,9 @@ EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 SpecialSym =['$', '@', '#', '%'] 
 
 requests = db.Table('requests', 
-        db.Column('accepted', db.Boolean, default=False),
+        db.Column('accepted', db.Integer, default=0),
         db.Column('user_id', db.Integer, db.ForeignKey('users.id', ondelete='cascade'), primary_key=True), 
-        db.Column('listing_id', db.Integer, db.ForeignKey('listings.id', ondelete='cascade'), primary_key=True))
+        db.Column('listing_id', db.Integer, db.ForeignKey('listings.id', ondelete='cascade'), primary_key=True), extend_existing=True)
         
         
 notifications = db.Table('notifications', 
@@ -19,6 +19,10 @@ notifications = db.Table('notifications',
         db.Column('listing_id', db.Integer, db.ForeignKey('listings.id', ondelete='cascade')),
         db.Column('sender_id', db.Integer, db.ForeignKey('users.id', ondelete='cascade'), primary_key=True), 
         db.Column('receiver_id', db.Integer, db.ForeignKey('users.id', ondelete='cascade'), primary_key=True))
+
+class UserRequest(db.Model):
+    __tablename__ = 'requests'
+    __table_args__ = {'extend_existing': True} 
 
 class User(db.Model):
     __tablename__ = 'users'	

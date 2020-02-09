@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 1d6da23d3b50
+Revision ID: 9e262b4e8298
 Revises: 
-Create Date: 2020-02-08 12:52:51.802016
+Create Date: 2020-02-09 23:51:01.799214
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1d6da23d3b50'
+revision = '9e262b4e8298'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -42,7 +42,7 @@ def upgrade():
     sa.Column('location_to', sa.String(), nullable=True),
     sa.Column('description', sa.String(), nullable=True),
     sa.Column('date', sa.DateTime(), nullable=True),
-    sa.Column('price', sa.Numeric(), nullable=True),
+    sa.Column('price', sa.String(), nullable=True),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='cascade'),
@@ -59,9 +59,9 @@ def upgrade():
     sa.PrimaryKeyConstraint('sender_id', 'receiver_id')
     )
     op.create_table('requests',
-    sa.Column('accepted', sa.Boolean(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('listing_id', sa.Integer(), nullable=False),
+    sa.Column('accepted', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['listing_id'], ['listings.id'], ondelete='cascade'),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='cascade'),
     sa.PrimaryKeyConstraint('user_id', 'listing_id')

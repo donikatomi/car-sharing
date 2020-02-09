@@ -3,9 +3,21 @@
 
 <div class="container my-3 content-height">
     {% for listing in listings %}
-    <p>{{listing.requester_name}} requested your listing: {{listing.description}} on {{listing.day}}/{{listing.month}} </p>
-    <a href="/{{listing.id}}/accept/{{listing.requester_id}}" class="btn btn-success">Accept</a>
-    <a href="/{{listing.id}}/decline" class="btn btn-danger">Decline</a>
+    <p>{{listing.requester_name}} requested your listing: {{listing.description}} on {{listing.day}}/{{listing.month}}</p>
+    <div class="row">
+        {% if listing.accepted == 1 %}
+        Accepted
+        {% elif listing.accepted == 2 %}
+        Declined
+        {% else %}
+    <form action="/{{listing.id}}/accept/{{listing.requester_id}}" method="post" class="mx-2">
+        <input type="submit" class="btn btn-success" name="accept" value="Accept">
+    </form>
+    <form action="/{{listing.id}}/decline/{{listing.requester_id}}" method="post">
+        <input type="submit" class="btn btn-danger" name="decline" value="Decline">
+    </form>
+    {% endif %}
+    </div>
     <hr>
     {% endfor %}
 </div>

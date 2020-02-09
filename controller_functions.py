@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, session
 from config import app, db
-from models import User, Listing
+from models import User, Listing, UserRequest
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 app.secret_key = 'secret'
@@ -58,27 +58,6 @@ def profile_dashboard():
     logged_in_user = User.query.filter_by(id=session['user_id']).first_or_404("Not logged in")  
     return render_template("profile_dashboard.html", logged_in_user=logged_in_user)
 
-def requests():
-    sql = text('select l.*, l.date as ldate, strftime("%m", l.date) as month, strftime("%d", l.date) as day, u.first_name as requester_name, u.last_name as requester_lastname, u.id as requester_id from  listings l join requests r on l.id = r.listing_id join users u on r.user_id = u.id Where l.user_id = 2 order by l.date desc')
-    listings = db.engine.execute(sql)
-    # for listing in listings:
-    #     date_time_obj = datetime.strptime(listing.ldate, '%Y-%m-%d %H:%M:%S.%f')
-        # listing.month = date_time_obj.strftime("%B")
-        # listing.day = date_time_obj.day
-
-
-    # count=0
-    logged_in_user = User.query.filter_by(id=session['user_id']).first_or_404("Not logged in")
-    # listings = Listing.query.filter_by(user_id=session['user_id']).all()
-    # users = []
-    # for listing in listings:
-    #     listing.users_request_this_listing.all()
-    #     db.session.commit()
-    #     users.append(listing.users_request_this_listing.all())
-    #     users_request_this_listing.first_name
-    # count = len(users)  
-    
-    return render_template("requests.html", logged_in_user=logged_in_user, listings=listings)
 
 def create_listing():
     is_valid = True
@@ -92,7 +71,7 @@ def create_listing():
     db.session.commit()
     return redirect('/profile')
 
-def my_lisitngs():
+def my_listings():
     logged_in_user = User.query.filter_by(id=session['user_id']).first_or_404("Not logged in")
     listings = Listing.query.filter(Listing.user_id==session['user_id']).all()
     for listing in listings:
@@ -126,15 +105,44 @@ def details(listing_id):
         logged_in_user = False
         return redirect('/login')
     
-
 def request_listing(listing_id, methods=['POST']):
     if request:
         logged_in_user = User.query.get(session['user_id'])
         existing_listing = Listing.query.get(listing_id)
         existing_listing.users_request_this_listing.append(logged_in_user)
+        print(existing_listing.users_request_this_listing.append(logged_in_user))
         db.session.commit()
     return redirect(f'/{listing_id}/details')
 
+def requests():
+    sql = text('SELECT l.*, l.date AS ldate, r.accepted, strftime("%m", l.date) AS month, strftime("%d", l.date) AS day, u.first_name AS requester_name, u.last_name AS requester_lastname, u.id AS requester_id FROM listings l JOIN requests r ON l.id = r.listing_id JOIN users u ON r.user_id = u.id WHERE l.user_id = '+str(session['user_id'])+' ORDER BY l.date DESC')
+    listings = db.engine.execute(sql)
+ 
+    # count=0
+    logged_in_user = User.query.get(session['user_id'])
+    # listings = Listing.query.filter_by(user_id=session['user_id']).all()
+    # users = []
+    # for listing in listings:
+    #     listing.users_request_this_listing.all()
+    #     db.session.commit()
+    #     users.append(listing.users_request_this_listing.all())
+    #     users_request_this_listing.first_name
+    # count = len(users)   
+    return render_template("requests.html", logged_in_user=logged_in_user, listings=listings)
+
+def acceptListing(lid, requester_id, methods=['POST']):
+    upd = UserRequest.query.filter_by(listing_id = lid, user_id = requester_id).first()
+    upd.accepted = 1
+    db.session.commit()
+ 
+    return redirect ('/requests')
+
+def declineListing(lid, requester_id, methods=['POST']):
+    upd = UserRequest.query.filter_by(listing_id = lid, user_id = requester_id).first()
+    upd.accepted = 2
+    db.session.commit()
+    # db.session.close()  
+    return redirect ('/requests')
 
 
 def on_like(tweet_id):
