@@ -1,0 +1,22 @@
+{% include 'includes/header.html' %}
+
+
+<div class="container my-3 content-height">
+    
+    {% for i in notifications %}
+    {{notification.accepted}}
+    <div class="row">
+        {% if notification.accepted == 1 %}
+        <p>{{notification.first_name}} has accepted your request: listing: {{notification.description}} on {{notification.day}}/{{notification.month}}</p>
+        {% elif notification.accepted == 0 %}
+        <p>{{notification.first_name}} has declined your listing: {{notification.description}} on {{notification.day}}/{{notification.month}}</p>
+        {% else %}
+        <p>No Notifications</p>
+        {% endif %}
+    </div>
+    <hr>
+    {% endfor %}
+</div>
+
+
+{% include 'includes/footer.html' %}

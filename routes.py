@@ -2,7 +2,7 @@ from flask import Flask
 from config import app
 from controller_functions import (landing_page, register, login, on_register, on_login, logout, 
 profile_dashboard, create_listing, searchListing, details, request_listing, requests, my_listings,
-acceptListing, declineListing)
+acceptListing, declineListing, showNotifications)
 
 app.add_url_rule("/", view_func=landing_page)
 app.add_url_rule("/register", view_func=register)
@@ -19,3 +19,4 @@ app.add_url_rule("/requests", view_func=requests)
 app.add_url_rule("/my-listings", view_func=my_listings)
 app.add_url_rule("/<int:lid>/accept/<int:requester_id>", view_func=acceptListing, methods=['POST'])
 app.add_url_rule("/<int:lid>/decline/<int:requester_id>", view_func=declineListing, methods=['POST'])
+app.add_url_rule("/notifications", view_func=showNotifications)

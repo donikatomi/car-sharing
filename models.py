@@ -9,16 +9,17 @@ EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 SpecialSym =['$', '@', '#', '%'] 
 
 requests = db.Table('requests', 
-        db.Column('accepted', db.Integer, default=0),
+        db.Column('accepted', db.Boolean),
         db.Column('user_id', db.Integer, db.ForeignKey('users.id', ondelete='cascade'), primary_key=True), 
-        db.Column('listing_id', db.Integer, db.ForeignKey('listings.id', ondelete='cascade'), primary_key=True), extend_existing=True)
+        db.Column('listing_id', db.Integer, db.ForeignKey('listings.id', ondelete='cascade'), primary_key=True))
         
         
-notifications = db.Table('notifications', 
-        db.Column('content', db.String()),
-        db.Column('listing_id', db.Integer, db.ForeignKey('listings.id', ondelete='cascade')),
-        db.Column('sender_id', db.Integer, db.ForeignKey('users.id', ondelete='cascade'), primary_key=True), 
-        db.Column('receiver_id', db.Integer, db.ForeignKey('users.id', ondelete='cascade'), primary_key=True))
+# users_notifications = db.Table('users_notifications', 
+#         db.Column('notification_id', db.Integer, db.ForeignKey('notifications.id', ondelete='cascade')),
+#         # db.Column('listing_id', db.Integer, db.ForeignKey('listings.id', ondelete='cascade'), primary_key=True),
+#         db.Column('sender_id', db.Integer, db.ForeignKey('users.id', ondelete='cascade')), 
+#         db.Column('receiver_id', db.Integer, db.ForeignKey('users.id', ondelete='cascade'), primary_key=True))
+        
 
 class UserRequest(db.Model):
     __tablename__ = 'requests'
@@ -34,7 +35,8 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, server_default=func.now())   
     updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
     listings_requested_by_this_user = db.relationship('Listing', secondary=requests, lazy='dynamic',backref=db.backref('users', lazy=True))
-    notifications_by_users = db.relationship('User', secondary=notifications, primaryjoin=id==notifications.c.receiver_id, secondaryjoin=id==notifications.c.sender_id, lazy='dynamic',backref=db.backref('accept_decline_notifications', lazy=True))
+    # listings_notified_this_user = db.relationship('Listing', secondary=notifications, lazy='dynamic',backref=db.backref('notif_users', lazy=True))
+    # notifications_by_users = db.relationship('User', secondary=users_notifications, primaryjoin=id==users_notifications.c.receiver_id, secondaryjoin=id==users_notifications.c.sender_id, lazy='dynamic',backref=db.backref('accept_decline_notifications', lazy=True))
 
     @classmethod
     def validate_user(cls, user_data):
@@ -115,6 +117,17 @@ class Listing(db.Model):
     # locationFrom = db.relationship('Location', foreign_keys=[location_from], backref="location_from")
     # locationTo = db.relationship('Location', foreign_keys=[location_to], backref="location_to")
     users_request_this_listing = db.relationship('User', secondary=requests, lazy='dynamic', backref=db.backref('listings', lazy=True))
+    # users_notified_for_this_listing  = db.relationship('User', secondary=notifications, lazy='dynamic', backref=db.backref('notif_listings', lazy=True))
+
+class Notification(db.Model):
+    __tablename__ = 'notifications'
+    id = db.Column(db.Integer, primary_key=True)
+    listing_id = db.Column(db.Integer, db.ForeignKey("listings.id", ondelete="cascade"), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="cascade"), nullable=False)
+    sender_id = db.Column(db.Integer)
+    listing = db.relationship("Listing", foreign_keys=[listing_id], backref="notif_listings")
+    receiver = db.relationship("User", foreign_keys=[receiver_id], backref="notif_users")
+    # __table_args__ = (ForeignKeyConstraint([sender_id, receiver_id],[User.id, User.id]))
 
 class Location(db.Model):
     __tablename__ = 'locations'

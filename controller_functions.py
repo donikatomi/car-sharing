@@ -1,12 +1,13 @@
 from flask import render_template, request, redirect, session
 from config import app, db
-from models import User, Listing, UserRequest
+from models import User, Listing, UserRequest, Notification
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 app.secret_key = 'secret'
 bcrypt = Bcrypt(app)
 
 from sqlalchemy import text
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 
 def landing_page():
@@ -98,9 +99,11 @@ def details(listing_id):
     listing.day = listing.date.day
     listing.hour = listing.date.hour
     listing.minute = listing.date.minute
+    requester = listing.users_request_this_listing.filter_by(id=session['user_id']).first()
+    print(requester)
     if ('user_id' in session):
         logged_in_user = User.query.filter_by(id=session['user_id']).first()
-        return render_template("listing_details.html", listing=listing, logged_in_user=logged_in_user) 
+        return render_template("listing_details.html", listing=listing, logged_in_user=logged_in_user, requester=requester) 
     else:
         logged_in_user = False
         return redirect('/login')
@@ -110,15 +113,14 @@ def request_listing(listing_id, methods=['POST']):
         logged_in_user = User.query.get(session['user_id'])
         existing_listing = Listing.query.get(listing_id)
         existing_listing.users_request_this_listing.append(logged_in_user)
-        print(existing_listing.users_request_this_listing.append(logged_in_user))
         db.session.commit()
+        # existing_listing.users_notified_for_this_listing.append(logged_in_user)
+        # db.session.commit()
     return redirect(f'/{listing_id}/details')
 
 def requests():
     sql = text('SELECT l.*, l.date AS ldate, r.accepted, strftime("%m", l.date) AS month, strftime("%d", l.date) AS day, u.first_name AS requester_name, u.last_name AS requester_lastname, u.id AS requester_id FROM listings l JOIN requests r ON l.id = r.listing_id JOIN users u ON r.user_id = u.id WHERE l.user_id = '+str(session['user_id'])+' ORDER BY l.date DESC')
     listings = db.engine.execute(sql)
- 
-    # count=0
     logged_in_user = User.query.get(session['user_id'])
     # listings = Listing.query.filter_by(user_id=session['user_id']).all()
     # users = []
@@ -134,15 +136,32 @@ def acceptListing(lid, requester_id, methods=['POST']):
     upd = UserRequest.query.filter_by(listing_id = lid, user_id = requester_id).first()
     upd.accepted = 1
     db.session.commit()
- 
+    new_notification = Notification(listing_id = lid, receiver_id = requester_id, sender_id=session['user_id'])
+    db.session.add(new_notification)
+    db.session.commit()
+
     return redirect ('/requests')
 
 def declineListing(lid, requester_id, methods=['POST']):
     upd = UserRequest.query.filter_by(listing_id = lid, user_id = requester_id).first()
-    upd.accepted = 2
+    upd.accepted = 0
     db.session.commit()
-    # db.session.close()  
+    new_notification = Notification(listing_id = lid, receiver_id = requester_id, sender_id=session['user_id'])
+    db.session.add(new_notification)
+    db.session.commit() 
     return redirect ('/requests')
+
+def showNotifications():
+    sql = text("SELECT l.id as listing_id, l.description, strftime('%m', l.date) AS month, strftime('%d', l.date) AS day, u.first_name, u.last_name, r.accepted  FROM notifications n JOIN listings l on n.listing_id = l.id JOIN requests r on n.listing_id = r.listing_id JOIN users u on n.sender_id = u.id WHERE n.receiver_id = "+str(session['user_id'])+";")
+    notifications = db.engine.execute(sql)
+    for i in notifications:
+        print(i.accepted)
+    logged_in_user = User.query.get(session['user_id'])
+    return render_template("notifications.html", notifications=notifications, logged_in_user=logged_in_user)
+
+
+
+
 
 
 def on_like(tweet_id):

@@ -1,13 +1,13 @@
 {% include 'includes/header.html' %}
 
 
-<div class="container my-3 content-height">
+<div class="container my-3 content-height p-4">
     {% for listing in listings %}
     <p>{{listing.requester_name}} requested your listing: {{listing.description}} on {{listing.day}}/{{listing.month}}</p>
     <div class="row">
         {% if listing.accepted == 1 %}
         Accepted
-        {% elif listing.accepted == 2 %}
+        {% elif listing.accepted == 0 %}
         Declined
         {% else %}
     <form action="/{{listing.id}}/accept/{{listing.requester_id}}" method="post" class="mx-2">

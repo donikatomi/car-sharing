@@ -28,25 +28,28 @@
 
                         {% if(logged_in_user) %}
                         <li class="nav-item active">
-                            <a class="nav-link" href="/">Home</a>
+                            <a class="nav-link" href="/">Search</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/requests"><span class="badge badge-danger mr-1">4</span>Requests</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" aria-haspopup="true"
+                        <!-- <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="/notifications" aria-haspopup="true"
                                 aria-expanded="true">
                                 <span class="badge badge-danger ml-2">4</span>
                                 <i class="fas fa-bell"></i>
                             </a>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">My Listings ksjdfkjsdfkls kjsdfk asjdajs</a>
+                                <a class="dropdown-item" href="#">notification.accepted</a>
                                 <a class="dropdown-item" href="/profile">Add Listing</a>
                                 <a class="dropdown-item" href="/">Search Listing</a>
                             </div>
+                        </li> -->
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/notifications">Notifications</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/requests"><span class="badge badge-danger mr-1">4</span>Requests</a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
                                 aria-haspopup="true" aria-expanded="false">{{logged_in_user.first_name}}</a>
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" href="/my-listings">My Listings</a>
