@@ -39,10 +39,11 @@
 div.content-height{
   min-height: 300px;
 }
-/* .listing-group{
-  display: flex;
-  justify-content: space-evenly;
-} */
+#delete-listing{
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 0;
+  }
 
 #footer{
   background-color: #2f2f2f;

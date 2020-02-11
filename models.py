@@ -10,8 +10,8 @@ SpecialSym =['$', '@', '#', '%']
 
 requests = db.Table('requests', 
         db.Column('accepted', db.Boolean),
-        db.Column('user_id', db.Integer, db.ForeignKey('users.id', ondelete='cascade'), primary_key=True), 
-        db.Column('listing_id', db.Integer, db.ForeignKey('listings.id', ondelete='cascade'), primary_key=True))
+        db.Column('user_id', db.Integer, db.ForeignKey('users.id', ondelete='cascade', onupdate='cascade'), primary_key=True), 
+        db.Column('listing_id', db.Integer, db.ForeignKey('listings.id', ondelete='cascade', onupdate='cascade'), primary_key=True))
         
         
 # users_notifications = db.Table('users_notifications', 
@@ -105,7 +105,7 @@ class User(db.Model):
 class Listing(db.Model):
     __tablename__ = 'listings'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="cascade"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="cascade", onupdate='cascade'), nullable=False)
     location_from = db.Column(db.String())
     location_to = db.Column(db.String())
     description = db.Column(db.String())
@@ -122,8 +122,8 @@ class Listing(db.Model):
 class Notification(db.Model):
     __tablename__ = 'notifications'
     id = db.Column(db.Integer, primary_key=True)
-    listing_id = db.Column(db.Integer, db.ForeignKey("listings.id", ondelete="cascade"), nullable=False)
-    receiver_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="cascade"), nullable=False)
+    listing_id = db.Column(db.Integer, db.ForeignKey("listings.id", ondelete="cascade", onupdate='cascade'), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="cascade", onupdate='cascade'), nullable=False)
     sender_id = db.Column(db.Integer)
     listing = db.relationship("Listing", foreign_keys=[listing_id], backref="notif_listings")
     receiver = db.relationship("User", foreign_keys=[receiver_id], backref="notif_users")

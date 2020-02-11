@@ -3,7 +3,7 @@
 
 <div class="container my-3 content-height">
     
-    {% for i in notifications %}
+    {% for notification in notifications %}
     {{notification.accepted}}
     <div class="row">
         {% if notification.accepted == 1 %}

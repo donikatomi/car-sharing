@@ -2,16 +2,24 @@
 
 
 <div class="container my-5 content-height">
-    <h5 class="mb-3 text-dark ml-1">My Listings:</h5>
-        <div class="list-group listing-group">
-            {% for listing in listings %}
-            <a href="/{{listing.id}}/details" class="list-group-item list-group-item-action list-group-item-warning">
-                {{listing.description}} on {{listing.day}} {{listing.month}}
-                <span id="listing-price" class="ml-5">Price: {{listing.price}} &euro;</span></a>
-
-            <hr>
-            {% endfor %}
-        </div>
+    <h5 class="mb-3 text-dark">My Listings:</h5>
+    {% for listing in listings %}
+    <div class="list-group listing-group justify-content-start">       
+        <a href="/{{listing.id}}/details" class="col-sm-12 col-md-9 col-lg-6 mb-1 list-group-item list-group-item-action list-group-item-warning">
+            <div class="d-flex justify-content-between align-items-center">
+                <span>{{listing.description}} on {{listing.day}} {{listing.month}}</span>
+                <span id="listing-price">Price: {{listing.price}} &euro;</span>
+            </div>
+            <small class="text-muted">3 days ago</small>
+        </a>       
+    </div>
+    <div class="col-sm-12 col-md-9 col-lg-6" id="delete-listing">
+        <form action="/delete-listing/{{listing.id}}" method="post">
+            <input type="submit" class="btn btn-danger" value="Delete">
+        </form>
+    </div>
+    <hr>
+    {% endfor %}
 </div>
 
 

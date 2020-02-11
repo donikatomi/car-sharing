@@ -44,7 +44,7 @@ def on_login():
     if not validation_check:
         return redirect('/login')
     else:
-        result = User.query.filter_by(email=request.form.get('email')).first_or_404(description="Email doesn't exists")
+        result = User.query.filter_by(email=request.form.get('email')).first_or_404(description="Email doesn't exist")
         session['user_id'] = result.id
         return redirect('/profile')
 
@@ -59,6 +59,13 @@ def profile_dashboard():
     logged_in_user = User.query.filter_by(id=session['user_id']).first_or_404("Not logged in")  
     return render_template("profile_dashboard.html", logged_in_user=logged_in_user)
 
+def my_listings():
+    logged_in_user = User.query.filter_by(id=session['user_id']).first_or_404("Not logged in")
+    listings = Listing.query.filter(Listing.user_id==session['user_id']).all()
+    for listing in listings:
+        listing.month = listing.date.strftime("%B")
+        listing.day = listing.date.day
+    return render_template("user_listings.html", listings=listings, logged_in_user=logged_in_user)
 
 def create_listing():
     is_valid = True
@@ -71,14 +78,6 @@ def create_listing():
     db.session.add(new_listing)
     db.session.commit()
     return redirect('/profile')
-
-def my_listings():
-    logged_in_user = User.query.filter_by(id=session['user_id']).first_or_404("Not logged in")
-    listings = Listing.query.filter(Listing.user_id==session['user_id']).all()
-    for listing in listings:
-        listing.month = listing.date.strftime("%B")
-        listing.day = listing.date.day
-    return render_template("user_listings.html", listings=listings, logged_in_user=logged_in_user)
 
 def searchListing():
     if ('user_id' in session):
@@ -99,14 +98,30 @@ def details(listing_id):
     listing.day = listing.date.day
     listing.hour = listing.date.hour
     listing.minute = listing.date.minute
-    requester = listing.users_request_this_listing.filter_by(id=session['user_id']).first()
-    print(requester)
     if ('user_id' in session):
         logged_in_user = User.query.filter_by(id=session['user_id']).first()
+        requester = listing.users_request_this_listing.filter_by(id=session['user_id']).first()
         return render_template("listing_details.html", listing=listing, logged_in_user=logged_in_user, requester=requester) 
     else:
         logged_in_user = False
         return redirect('/login')
+
+def destroy(lid, methods=['POST']):
+    if request:
+        listing = Listing.query.get_or_404(lid, description="Listing doesn't exist")
+        notification = Notification.query.filter_by(listing_id=lid).first()
+        if notification:
+            db.session.delete(notification)
+            db.session.commit()
+        users = listing.users_request_this_listing.all()
+        if users:
+            for user in users:
+                listing.users_request_this_listing.remove(user)
+                db.session.commit()
+        db.session.delete(listing)
+        db.session.commit()
+    return redirect('/my-listings')
+        
     
 def request_listing(listing_id, methods=['POST']):
     if request:
@@ -190,11 +205,6 @@ def on_details(tweet_id_route):
     tweet_details = tweet.user 
     return render_template("tweet_details.html", tweet_details = tweet_details)
 
-def destroy(tweet_id):
-    tweet_instance_to_delete = Tweet.query.get_or_404(tweet_id)
-    db.session.delete(tweet_instance_to_delete)
-    db.session.commit()
-    return redirect('/dashboard')
 
 def edit(tweet_id):
     tweet = Tweet.query.filter_by(id=tweet_id).first()

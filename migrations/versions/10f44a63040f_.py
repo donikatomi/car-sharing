@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: bc6fe79642db
+Revision ID: 10f44a63040f
 Revises: 
-Create Date: 2020-02-10 21:10:11.555816
+Create Date: 2020-02-11 14:44:27.720795
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'bc6fe79642db'
+revision = '10f44a63040f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -45,7 +45,7 @@ def upgrade():
     sa.Column('price', sa.String(), nullable=True),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='cascade'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], onupdate='cascade', ondelete='cascade'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('notifications',
@@ -53,16 +53,16 @@ def upgrade():
     sa.Column('listing_id', sa.Integer(), nullable=False),
     sa.Column('receiver_id', sa.Integer(), nullable=False),
     sa.Column('sender_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['listing_id'], ['listings.id'], ondelete='cascade'),
-    sa.ForeignKeyConstraint(['receiver_id'], ['users.id'], ondelete='cascade'),
+    sa.ForeignKeyConstraint(['listing_id'], ['listings.id'], onupdate='cascade', ondelete='cascade'),
+    sa.ForeignKeyConstraint(['receiver_id'], ['users.id'], onupdate='cascade', ondelete='cascade'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('requests',
     sa.Column('accepted', sa.Boolean(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('listing_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['listing_id'], ['listings.id'], ondelete='cascade'),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='cascade'),
+    sa.ForeignKeyConstraint(['listing_id'], ['listings.id'], onupdate='cascade', ondelete='cascade'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], onupdate='cascade', ondelete='cascade'),
     sa.PrimaryKeyConstraint('user_id', 'listing_id')
     )
     # ### end Alembic commands ###

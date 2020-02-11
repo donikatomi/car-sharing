@@ -1,4 +1,5 @@
 {% include 'includes/header.html' %}
+
 <div id="main">
     <div id="banner">
         <form action="/search" method="get" class="form-inline">
@@ -12,13 +13,16 @@
     <div class="container my-5">
         <h4 class="mb-3">Latest Listings:</h3>
         <div class="list-group listing-group">
-            {% for listing in listings %}
-            
-            <a href="/{{listing.id}}/details" class="list-group-item list-group-item-action list-group-item-warning">{{listing.user.first_name}} is {{listing.description}} on {{listing.day}} {{listing.month}} 
-            <span id="listing-price" class="ml-5">Price: {{listing.price}} &euro;</span></a> 
-            
+            {% for listing in listings %}     
+            <a href="/{{listing.id}}/details" class="list-group-item list-group-item-action list-group-item-warning">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>{{listing.user.first_name}} is {{listing.description}} on {{listing.day}} {{listing.month}} </span>
+                    <span id="listing-price" class="ml-5">Price: {{listing.price}} &euro;</span>
+                </div>
+            </a>          
             {% endfor %}
         </div>
     </div>
 </div>
+
 {% include 'includes/footer.html' %}
