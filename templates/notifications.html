@@ -2,16 +2,15 @@
 
 
 <div class="container my-3 content-height">
-    
+    {% if not notifications %}
+    <h4>No Notifications</h4>
+    {% endif %}
     {% for notification in notifications %}
-    {{notification.accepted}}
-    <div class="row">
+    <div class="row mt-4">
         {% if notification.accepted == 1 %}
-        <p>{{notification.first_name}} has accepted your request: listing: {{notification.description}} on {{notification.day}}/{{notification.month}}</p>
+        <p class="font-weight-bold text-body">{{notification.first_name}} has accepted your request: <span class="text-primary">{{notification.description}} on {{notification.day}}/{{notification.month}}</span></p>
         {% elif notification.accepted == 0 %}
-        <p>{{notification.first_name}} has declined your listing: {{notification.description}} on {{notification.day}}/{{notification.month}}</p>
-        {% else %}
-        <p>No Notifications</p>
+        <p class="font-weight-bold text-body">{{notification.first_name}} has declined your request: <span class="text-danger">{{notification.description}} on {{notification.day}}/{{notification.month}}</span></p>        
         {% endif %}
     </div>
     <hr>

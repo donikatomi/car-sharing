@@ -114,10 +114,7 @@ class Listing(db.Model):
     created_at = db.Column(db.DateTime, server_default=func.now())   
     updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
     user = db.relationship('User', foreign_keys=[user_id], backref="user_listings")
-    # locationFrom = db.relationship('Location', foreign_keys=[location_from], backref="location_from")
-    # locationTo = db.relationship('Location', foreign_keys=[location_to], backref="location_to")
-    users_request_this_listing = db.relationship('User', secondary=requests, lazy='dynamic', backref=db.backref('listings', lazy=True))
-    # users_notified_for_this_listing  = db.relationship('User', secondary=notifications, lazy='dynamic', backref=db.backref('notif_listings', lazy=True))
+    users_request_this_listing = db.relationship('User', secondary=requests, lazy='dynamic', backref=db.backref('listings', lazy=True))  
 
 class Notification(db.Model):
     __tablename__ = 'notifications'
@@ -127,12 +124,14 @@ class Notification(db.Model):
     sender_id = db.Column(db.Integer)
     listing = db.relationship("Listing", foreign_keys=[listing_id], backref="notif_listings")
     receiver = db.relationship("User", foreign_keys=[receiver_id], backref="notif_users")
-    # __table_args__ = (ForeignKeyConstraint([sender_id, receiver_id],[User.id, User.id]))
 
-class Location(db.Model):
-    __tablename__ = 'locations'
-    id = db.Column(db.Integer, primary_key=True)
-    city = db.Column(db.String())
-    created_at = db.Column(db.DateTime, server_default=func.now())   
-    updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
+
+
+
+# class Location(db.Model):
+#     __tablename__ = 'locations'
+#     id = db.Column(db.Integer, primary_key=True)
+#     city = db.Column(db.String())
+#     created_at = db.Column(db.DateTime, server_default=func.now())   
+#     updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
     

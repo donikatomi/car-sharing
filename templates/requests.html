@@ -2,13 +2,16 @@
 
 
 <div class="container my-3 content-height p-4">
+    {% if not listings %}
+    <h4>No Requests</h4>
+    {% endif %}
     {% for listing in listings %}
     <p>{{listing.requester_name}} requested your listing: {{listing.description}} on {{listing.day}}/{{listing.month}}</p>
     <div class="row">
         {% if listing.accepted == 1 %}
-        Accepted
+        <button class="btn btn-info" disabled>Accepted</button>
         {% elif listing.accepted == 0 %}
-        Declined
+        <button class="btn btn-info" disabled>Declined</button>
         {% else %}
     <form action="/{{listing.id}}/accept/{{listing.requester_id}}" method="post" class="mx-2">
         <input type="submit" class="btn btn-success" name="accept" value="Accept">

@@ -135,16 +135,9 @@ def request_listing(listing_id, methods=['POST']):
 
 def requests():
     sql = text('SELECT l.*, l.date AS ldate, r.accepted, strftime("%m", l.date) AS month, strftime("%d", l.date) AS day, u.first_name AS requester_name, u.last_name AS requester_lastname, u.id AS requester_id FROM listings l JOIN requests r ON l.id = r.listing_id JOIN users u ON r.user_id = u.id WHERE l.user_id = '+str(session['user_id'])+' ORDER BY l.date DESC')
-    listings = db.engine.execute(sql)
-    logged_in_user = User.query.get(session['user_id'])
-    # listings = Listing.query.filter_by(user_id=session['user_id']).all()
-    # users = []
-    # for listing in listings:
-    #     listing.users_request_this_listing.all()
-    #     db.session.commit()
-    #     users.append(listing.users_request_this_listing.all())
-    #     users_request_this_listing.first_name
-    # count = len(users)   
+    result = db.engine.execute(sql)
+    listings = result.fetchall()
+    logged_in_user = User.query.get(session['user_id'])  
     return render_template("requests.html", logged_in_user=logged_in_user, listings=listings)
 
 def acceptListing(lid, requester_id, methods=['POST']):
@@ -167,87 +160,10 @@ def declineListing(lid, requester_id, methods=['POST']):
     return redirect ('/requests')
 
 def showNotifications():
-    sql = text("SELECT l.id as listing_id, l.description, strftime('%m', l.date) AS month, strftime('%d', l.date) AS day, u.first_name, u.last_name, r.accepted  FROM notifications n JOIN listings l on n.listing_id = l.id JOIN requests r on n.listing_id = r.listing_id JOIN users u on n.sender_id = u.id WHERE n.receiver_id = "+str(session['user_id'])+";")
-    notifications = db.engine.execute(sql)
-    for i in notifications:
-        print(i.accepted)
     logged_in_user = User.query.get(session['user_id'])
+    sql = text("SELECT l.id as listing_id, l.description, strftime('%m', l.date) AS month, strftime('%d', l.date) AS day, u.first_name, u.last_name, r.accepted  FROM notifications n JOIN listings l on n.listing_id = l.id JOIN requests r on n.listing_id = r.listing_id JOIN users u on n.sender_id = u.id WHERE n.receiver_id = "+str(session['user_id'])+";")
+    result = db.engine.execute(sql)
+    notifications = result.fetchall()
+    for i in notifications:
+        print(i.description)
     return render_template("notifications.html", notifications=notifications, logged_in_user=logged_in_user)
-
-
-
-
-
-
-def on_like(tweet_id):
-    data = {'user_id':session['user_id'], 'tweet_id':tweet_id}
-     
-    tweet_id = data['tweet_id']
-    user_id = data['user_id']
-    existing_user = User.query.get(user_id)
-    existing_tweet = Tweet.query.get(tweet_id)
-    existing_tweet.users_liked_this_tweet.append(existing_user)
-    print(existing_tweet.users_liked_this_tweet)
-    #return existing_tweet
-    db.session.commit() 
-    return redirect('/dashboard')
-
-def on_unlike(tweet_id):
-    data = {'user_id': session['user_id']}
-    existing_tweet = Tweet.query.get(tweet_id)
-    existing_user = User.query.get(data['user_id'])
-    existing_tweet.users_liked_this_tweet.remove(existing_user)
-    db.session.commit()
-    return redirect('/dashboard')
-
-def on_details(tweet_id_route):
-    tweet = Tweet.query.get(tweet_id_route)
-    tweet_details = tweet.user 
-    return render_template("tweet_details.html", tweet_details = tweet_details)
-
-
-def edit(tweet_id):
-    tweet = Tweet.query.filter_by(id=tweet_id).first()
-    user_data = User.query.filter_by(id=session['user_id']).first() 
-    return render_template('edit.html', tweet = tweet, user_data = user_data)
-
-def update(tweet_id):
-   data = {'content':request.form['content']}
-   is_valid = True
-   if len(data['content']) < 1 or len(data['content']) > 255:
-       is_valid = False
-       flash('Tweet must be between 1 and 255 characters long.')
-   if is_valid:
-       tweet_instance_to_update = Tweet.query.get(tweet_id)
-       tweet_instance_to_update.content = data['content']
-       db.session.commit()
-       return redirect('/dashboard')
-   else:
-       return redirect(f'/tweets/{tweet_id}/edit')
-
-def all_users():
-    data = {'follower_id': session['user_id']}
-    all_users = User.query.all()
-
-    logged_in_user = User.query.get(data['follower_id'])
-    follower = logged_in_user.users_following_this_user.all() 
-   
-    return render_template("users.html", logged_in_user = logged_in_user, all_users=all_users, follower=follower)
-
-def on_follow(user_id):
-    data = {'user_id': user_id, 'follower_id': session['user_id']}
-
-    user = User.query.get(data['user_id'])
-    existing_user = User.query.get(data['follower_id'])
-    existing_user.users_following_this_user.append(user)
-    db.session.commit()
-
-    return redirect('/users')
-
-def on_unfollow(user_id):
-    data={'user_id': user_id, 'follower_id': session['user_id']}
-    user = User.query.get(data['user_id'])
-    existing_user = User.query.get(data['follower_id'])
-    existing_user.users_following_this_user.remove(user)
-    db.session.commit()
-    return redirect('/users')

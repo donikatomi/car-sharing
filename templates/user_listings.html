@@ -2,7 +2,11 @@
 
 
 <div class="container my-5 content-height">
+    {% if not listings %}
+    <h4>You have no listing</h4>
+    {% else %}
     <h5 class="mb-3 text-dark">My Listings:</h5>
+    {% endif %}
     {% for listing in listings %}
     <div class="list-group listing-group justify-content-start">       
         <a href="/{{listing.id}}/details" class="col-sm-12 col-md-9 col-lg-6 mb-1 list-group-item list-group-item-action list-group-item-warning">
